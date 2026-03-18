@@ -1,0 +1,14 @@
+{
+  "name": "digital-amnesia-dashboard-workspace",
+  "private": true,
+  "scripts": {
+    "dev:frontend": "npm --prefix frontend run dev",
+    "dev:backend": "dotnet watch --project backend/DigitalAmnesia.Backend.csproj run",
+    "dev:worker": "dotnet watch --project worker/DigitalAmnesia.Worker.csproj run",
+    "build:backend": "dotnet build backend/DigitalAmnesia.Backend.csproj",
+    "build:worker": "dotnet build worker/DigitalAmnesia.Worker.csproj",
+    "build:frontend": "npm --prefix frontend run build",
+    "lint:frontend": "npm --prefix frontend run lint",
+    "test:e2e": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/test-e2e.ps1"
+  }
+}
