@@ -65,7 +65,7 @@ const Scan = () => {
 
   return (
     <div className="space-y-6">
-      <ProgressPanel status={job.status} progress={job.progress} />
+      <ProgressPanel status={job.status} progress={job.progress} error={job.error} />
       <section className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-5">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>

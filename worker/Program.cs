@@ -21,6 +21,11 @@ builder.Services.Configure<JsonSerializerOptions>(serializerOptions =>
 {
     serializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 });
+builder.Services.AddHttpClient<GitHubApiClient>(client =>
+{
+    client.BaseAddress = new Uri(options.GitHubApiBaseUrl);
+});
+builder.Services.AddSingleton<GitHubScanner>();
 builder.Services.AddHostedService<ScanWorkerService>();
 
 await builder.Build().RunAsync();

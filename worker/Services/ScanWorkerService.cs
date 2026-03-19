@@ -7,6 +7,7 @@ namespace DigitalAmnesia.Worker.Services;
 
 public sealed partial class ScanWorkerService(
     WorkerApiClient apiClient,
+    GitHubScanner gitHubScanner,
     WorkerOptions options,
     ILogger<ScanWorkerService> logger
 ) : BackgroundService
@@ -57,6 +58,7 @@ public sealed partial class ScanWorkerService(
         var liveResults = job.Results
             .Select(CloneResult)
             .ToList();
+        var targetErrors = new List<string>();
 
         try
         {
@@ -86,16 +88,34 @@ public sealed partial class ScanWorkerService(
 
                 await Task.Delay(options.StepDelay, cancellationToken);
 
-                var platformResults = BuildResultsForPlatform(job, target.Platform, liveResults.Count);
-                liveResults.AddRange(platformResults);
+                PlatformScanOutcome outcome;
+                try
+                {
+                    outcome = await ScanPlatformAsync(job, target.Platform, liveResults.Count, cancellationToken);
+                }
+                catch (Exception exception) when (exception is not OperationCanceledException)
+                {
+                    logger.LogWarning(exception, "Platform scan failed for {Platform} on {JobId}", target.Platform, job.Id);
+                    outcome = new PlatformScanOutcome
+                    {
+                        Status = "failed",
+                        Message = exception.Message,
+                        Error = exception.Message,
+                    };
+                }
+
+                liveResults.AddRange(outcome.Results);
                 liveTargets = UpdateTarget(liveTargets, target.Platform, new ScanTarget
                 {
                     Platform = target.Platform,
-                    Status = "completed",
-                    Message = platformResults.Count > 0
-                        ? $"{platformResults.Count} matches found"
-                        : "No public matches found",
+                    Status = outcome.Status,
+                    Message = outcome.Message,
                 });
+
+                if (!string.IsNullOrWhiteSpace(outcome.Error))
+                {
+                    targetErrors.Add($"{target.Platform}: {outcome.Error}");
+                }
 
                 var isLastTarget = index == liveTargets.Count - 1;
 
@@ -103,12 +123,12 @@ public sealed partial class ScanWorkerService(
                     job.Id,
                     new
                     {
-                        status = isLastTarget ? "completed" : "running",
+                        status = isLastTarget ? GetTerminalJobStatus(liveTargets) : "running",
                         progress = (int)Math.Round((double)(index + 1) / liveTargets.Count * 100),
                         targets = liveTargets,
                         results = liveResults,
                         completedAt = isLastTarget ? DateTimeOffset.UtcNow.ToString("O") : null,
-                        error = (string?)null,
+                        error = isLastTarget ? BuildTerminalError(targetErrors) : null,
                     },
                     cancellationToken
                 );
@@ -132,6 +152,51 @@ public sealed partial class ScanWorkerService(
         }
     }
 
+    private async Task<PlatformScanOutcome> ScanPlatformAsync(
+        ScanJob job,
+        string platform,
+        int existingResultCount,
+        CancellationToken cancellationToken
+    )
+    {
+        if (string.Equals(platform, "GitHub", StringComparison.Ordinal) && options.UseLiveGitHubScanner)
+        {
+            return await gitHubScanner.ScanAsync(job.Query, existingResultCount, cancellationToken);
+        }
+
+        var results = BuildMockResultsForPlatform(job, platform, existingResultCount);
+        return new PlatformScanOutcome
+        {
+            Status = "completed",
+            Message = results.Count > 0
+                ? $"{results.Count} match{(results.Count == 1 ? string.Empty : "es")} found"
+                : $"No public {platform} matches found",
+            Results = results,
+        };
+    }
+
+    private static string GetTerminalJobStatus(IReadOnlyCollection<ScanTarget> targets)
+    {
+        var failedTargets = targets.Count(target => string.Equals(target.Status, "failed", StringComparison.Ordinal));
+        var completedTargets = targets.Count(target => string.Equals(target.Status, "completed", StringComparison.Ordinal));
+
+        return failedTargets > 0 && completedTargets == 0
+            ? "failed"
+            : "completed";
+    }
+
+    private static string? BuildTerminalError(IEnumerable<string> targetErrors)
+    {
+        var errors = targetErrors
+            .Where(error => !string.IsNullOrWhiteSpace(error))
+            .Distinct(StringComparer.Ordinal)
+            .ToList();
+
+        return errors.Count == 0
+            ? null
+            : $"Some platform scans failed: {string.Join("; ", errors)}";
+    }
+
     private static List<ScanTarget> UpdateTarget(List<ScanTarget> targets, string platform, ScanTarget patch) =>
         targets.Select(target =>
         {
@@ -153,7 +218,7 @@ public sealed partial class ScanWorkerService(
             };
         }).ToList();
 
-    private static List<ScanResult> BuildResultsForPlatform(ScanJob job, string platform, int existingResultCount)
+    private static List<ScanResult> BuildMockResultsForPlatform(ScanJob job, string platform, int existingResultCount)
     {
         var query = job.Query;
         var baseUsername = BuildBaseUsername(query);

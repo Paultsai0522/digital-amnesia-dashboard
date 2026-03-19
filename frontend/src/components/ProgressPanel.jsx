@@ -1,6 +1,6 @@
 import React from 'react'
 
-const ProgressPanel = ({ status, progress }) => {
+const ProgressPanel = ({ status, progress, error }) => {
   const badgeStyles = {
     queued: 'border-zinc-700 bg-zinc-800 text-zinc-300',
     running: 'border-cyan-500/30 bg-cyan-500/10 text-cyan-300',
@@ -11,7 +11,7 @@ const ProgressPanel = ({ status, progress }) => {
   const helperText = {
     queued: 'Waiting for a worker to claim this job.',
     running: `${progress}% completed`,
-    completed: 'Scan finished successfully.',
+    completed: error ? 'Scan finished with partial failures.' : 'Scan finished successfully.',
     failed: 'Scan stopped before completion.',
   }
 
