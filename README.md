@@ -22,7 +22,7 @@ Digital Amnesia Dashboard is a demo application for running asynchronous identit
 
 ## How It Works
 
-The current implementation is split into a real queue pipeline and mixed scan providers:
+A real queue pipeline and mixed scan providers:
 
 - the frontend creates a scan job
 - the backend stores the job in a queue
@@ -36,7 +36,6 @@ The current implementation is split into a real queue pipeline and mixed scan pr
 - Node.js 22+
 - npm 10+
 - .NET 10 SDK
-- PowerShell for `npm run test:e2e`
 
 ## Current Status
 
