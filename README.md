@@ -1,6 +1,6 @@
 # Digital Amnesia Dashboard
 
-Digital Amnesia Dashboard is a demo application for running asynchronous identity scan jobs.
+Digital Amnesia Dashboard scans public social platforms for profiles matching a user’s digital identity signals, helping users understand and track their online footprint.
 
 ## Demo
 
