@@ -2,6 +2,10 @@
 
 Digital Amnesia Dashboard is a demo application for running asynchronous identity scan jobs.
 
+## Demo
+
+https://frontend-production-2b06.up.railway.app/
+
 ## Stack
 
 - `frontend/`: React + Vite + Tailwind
