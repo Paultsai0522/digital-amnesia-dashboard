@@ -11,10 +11,44 @@ public sealed class WorkerOptions
         new()
         {
             WorkerId = GetWorkerId(),
-            BackendApiUrl = Environment.GetEnvironmentVariable("BACKEND_API_URL")?.Trim() ?? "http://localhost:3001",
+            BackendApiUrl = GetBackendApiUrl(),
             PollInterval = TimeSpan.FromMilliseconds(GetPositiveInt("WORKER_POLL_INTERVAL_MS", 2000)),
             StepDelay = TimeSpan.FromMilliseconds(GetPositiveInt("WORKER_STEP_DELAY_MS", 900)),
         };
+
+    private static string GetBackendApiUrl()
+    {
+        const string fallback = "http://localhost:3001";
+        var configured = Environment.GetEnvironmentVariable("BACKEND_API_URL")?.Trim();
+
+        if (string.IsNullOrWhiteSpace(configured))
+        {
+            return fallback;
+        }
+
+        if (configured.Contains("${{", StringComparison.Ordinal) || configured.Contains("}}", StringComparison.Ordinal))
+        {
+            throw new InvalidOperationException(
+                "BACKEND_API_URL contains an unresolved Railway reference variable. " +
+                "Use a resolved value such as 'http://backend.railway.internal' or a Railway reference like " +
+                "'${{backend.RAILWAY_PRIVATE_DOMAIN}}' wrapped with 'http://' in the Variables UI."
+            );
+        }
+
+        if (Uri.TryCreate(configured, UriKind.Absolute, out var absoluteUri))
+        {
+            return absoluteUri.ToString().TrimEnd('/');
+        }
+
+        if (Uri.TryCreate($"http://{configured}", UriKind.Absolute, out var hostnameUri))
+        {
+            return hostnameUri.ToString().TrimEnd('/');
+        }
+
+        throw new InvalidOperationException(
+            $"BACKEND_API_URL must be a valid absolute URL or hostname. Current value: '{configured}'."
+        );
+    }
 
     private static string GetWorkerId()
     {
