@@ -6,6 +6,11 @@ public sealed class WorkerOptions
     public string BackendApiUrl { get; init; } = "http://localhost:3001";
     public TimeSpan PollInterval { get; init; } = TimeSpan.FromSeconds(2);
     public TimeSpan StepDelay { get; init; } = TimeSpan.FromMilliseconds(900);
+    public string GitHubApiBaseUrl { get; init; } = "https://api.github.com";
+    public string? GitHubToken { get; init; }
+    public int GitHubSearchResultLimit { get; init; } = 3;
+    public string GitHubScannerMode { get; init; } = "live";
+    public bool UseLiveGitHubScanner => string.Equals(GitHubScannerMode, "live", StringComparison.OrdinalIgnoreCase);
 
     public static WorkerOptions FromEnvironment() =>
         new()
@@ -14,6 +19,10 @@ public sealed class WorkerOptions
             BackendApiUrl = GetBackendApiUrl(),
             PollInterval = TimeSpan.FromMilliseconds(GetPositiveInt("WORKER_POLL_INTERVAL_MS", 2000)),
             StepDelay = TimeSpan.FromMilliseconds(GetPositiveInt("WORKER_STEP_DELAY_MS", 900)),
+            GitHubApiBaseUrl = GetAbsoluteUrl("GITHUB_API_BASE_URL", "https://api.github.com"),
+            GitHubToken = GetOptionalString("GITHUB_TOKEN"),
+            GitHubSearchResultLimit = GetPositiveInt("GITHUB_SEARCH_RESULT_LIMIT", 3),
+            GitHubScannerMode = GetScannerMode(),
         };
 
     private static string GetBackendApiUrl()
@@ -48,6 +57,40 @@ public sealed class WorkerOptions
         throw new InvalidOperationException(
             $"BACKEND_API_URL must be a valid absolute URL or hostname. Current value: '{configured}'."
         );
+    }
+
+    private static string GetAbsoluteUrl(string environmentVariable, string fallback)
+    {
+        var configured = Environment.GetEnvironmentVariable(environmentVariable)?.Trim();
+
+        if (string.IsNullOrWhiteSpace(configured))
+        {
+            return fallback;
+        }
+
+        if (Uri.TryCreate(configured, UriKind.Absolute, out var absoluteUri))
+        {
+            return absoluteUri.ToString().TrimEnd('/');
+        }
+
+        throw new InvalidOperationException(
+            $"{environmentVariable} must be a valid absolute URL. Current value: '{configured}'."
+        );
+    }
+
+    private static string? GetOptionalString(string environmentVariable)
+    {
+        var value = Environment.GetEnvironmentVariable(environmentVariable)?.Trim();
+        return string.IsNullOrWhiteSpace(value) ? null : value;
+    }
+
+    private static string GetScannerMode()
+    {
+        var configured = Environment.GetEnvironmentVariable("GITHUB_SCANNER_MODE")?.Trim();
+
+        return string.Equals(configured, "mock", StringComparison.OrdinalIgnoreCase)
+            ? "mock"
+            : "live";
     }
 
     private static string GetWorkerId()

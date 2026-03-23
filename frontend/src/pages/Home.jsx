@@ -11,7 +11,7 @@ const Home = () => {
         <ol className="mt-4 space-y-3 text-sm text-zinc-400">
           <li>1. Enter identity signals like username and keywords.</li>
           <li>2. The Job Producer API stores a queued scan job and returns a job id.</li>
-          <li>3. A worker claims queued jobs and updates progress for each platform.</li>
+          <li>3. A worker claims queued jobs and runs a live GitHub lookup plus demo scans for the other platforms.</li>
           <li>4. Review the final matched public profiles once the job completes.</li>
         </ol>
       </section>

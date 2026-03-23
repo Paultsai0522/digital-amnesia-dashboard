@@ -76,6 +76,7 @@ try {
 
         Set-Location $Path
         $env:BACKEND_API_URL = $ApiBaseUrl
+        $env:GITHUB_SCANNER_MODE = "mock"
         $env:WORKER_POLL_INTERVAL_MS = [string]$PollIntervalMs
         $env:WORKER_STEP_DELAY_MS = [string]$StepDelayMs
         dotnet run --project worker/DigitalAmnesia.Worker.csproj
