@@ -5,8 +5,11 @@ const ResultList = ({ results }) => {
   return (
     <section>
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-medium">Matches</h2>
-        <p className="text-sm text-zinc-500">{results.length} result(s)</p>
+        <div>
+          <p className="soft-kicker">Review</p>
+          <h2 className="font-display mt-1 text-2xl font-semibold tracking-[-0.03em]">Matches</h2>
+        </div>
+        <p className="rounded-full border border-[#dccfbe] bg-[#fff9ef] px-3 py-1 text-sm font-semibold text-[var(--muted)]">{results.length} result(s)</p>
       </div>
 
       {results.length > 0 ? (
@@ -16,7 +19,7 @@ const ResultList = ({ results }) => {
           ))}
         </div>
       ) : (
-        <div className="rounded-2xl border border-dashed border-zinc-800 bg-zinc-900/40 p-5 text-sm text-zinc-500">
+        <div className="rounded-[2rem] border border-dashed border-[#d8c9b8] bg-[#fffaf2]/70 p-5 text-sm text-[var(--muted)]">
           No matches yet. Results will appear here as the worker finishes each target.
         </div>
       )}

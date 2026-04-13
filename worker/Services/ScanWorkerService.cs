@@ -8,6 +8,7 @@ namespace DigitalAmnesia.Worker.Services;
 public sealed partial class ScanWorkerService(
     WorkerApiClient apiClient,
     GitHubScanner gitHubScanner,
+    XScanner xScanner,
     WorkerOptions options,
     ILogger<ScanWorkerService> logger
 ) : BackgroundService
@@ -162,6 +163,11 @@ public sealed partial class ScanWorkerService(
         if (string.Equals(platform, "GitHub", StringComparison.Ordinal) && options.UseLiveGitHubScanner)
         {
             return await gitHubScanner.ScanAsync(job.Query, existingResultCount, cancellationToken);
+        }
+
+        if (string.Equals(platform, "X", StringComparison.Ordinal) && options.UseLiveXScanner)
+        {
+            return await xScanner.ScanAsync(job.Query, existingResultCount, cancellationToken);
         }
 
         var results = BuildMockResultsForPlatform(job, platform, existingResultCount);

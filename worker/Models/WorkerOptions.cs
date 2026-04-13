@@ -10,10 +10,19 @@ public sealed class WorkerOptions
     public string? GitHubToken { get; init; }
     public int GitHubSearchResultLimit { get; init; } = 3;
     public string GitHubScannerMode { get; init; } = "live";
+    public string XApiBaseUrl { get; init; } = "https://api.x.com";
+    public string? XBearerToken { get; init; }
+    public int XSearchResultLimit { get; init; } = 5;
+    public string XScannerMode { get; init; } = "auto";
     public bool UseLiveGitHubScanner => string.Equals(GitHubScannerMode, "live", StringComparison.OrdinalIgnoreCase);
+    public bool UseLiveXScanner =>
+        string.Equals(XScannerMode, "live", StringComparison.OrdinalIgnoreCase)
+        || (string.Equals(XScannerMode, "auto", StringComparison.OrdinalIgnoreCase)
+            && !string.IsNullOrWhiteSpace(XBearerToken));
 
-    public static WorkerOptions FromEnvironment() =>
-        new()
+    public static WorkerOptions FromEnvironment()
+    {
+        var options = new WorkerOptions
         {
             WorkerId = GetWorkerId(),
             BackendApiUrl = GetBackendApiUrl(),
@@ -22,8 +31,16 @@ public sealed class WorkerOptions
             GitHubApiBaseUrl = GetAbsoluteUrl("GITHUB_API_BASE_URL", "https://api.github.com"),
             GitHubToken = GetOptionalString("GITHUB_TOKEN"),
             GitHubSearchResultLimit = GetPositiveInt("GITHUB_SEARCH_RESULT_LIMIT", 3),
-            GitHubScannerMode = GetScannerMode(),
+            GitHubScannerMode = GetScannerMode("GITHUB_SCANNER_MODE", "live", "mock", "live"),
+            XApiBaseUrl = GetAbsoluteUrl("X_API_BASE_URL", "https://api.x.com"),
+            XBearerToken = GetOptionalString("X_BEARER_TOKEN"),
+            XSearchResultLimit = GetPositiveInt("X_SEARCH_RESULT_LIMIT", 5),
+            XScannerMode = GetScannerMode("X_SCANNER_MODE", "auto", "mock", "live"),
         };
+
+        options.Validate();
+        return options;
+    }
 
     private static string GetBackendApiUrl()
     {
@@ -84,13 +101,35 @@ public sealed class WorkerOptions
         return string.IsNullOrWhiteSpace(value) ? null : value;
     }
 
-    private static string GetScannerMode()
+    private void Validate()
     {
-        var configured = Environment.GetEnvironmentVariable("GITHUB_SCANNER_MODE")?.Trim();
+        if (string.Equals(XScannerMode, "live", StringComparison.OrdinalIgnoreCase)
+            && string.IsNullOrWhiteSpace(XBearerToken))
+        {
+            throw new InvalidOperationException(
+                "X_BEARER_TOKEN is required when X_SCANNER_MODE is set to 'live'."
+            );
+        }
+    }
 
-        return string.Equals(configured, "mock", StringComparison.OrdinalIgnoreCase)
-            ? "mock"
-            : "live";
+    private static string GetScannerMode(string environmentVariable, string fallback, params string[] allowedModes)
+    {
+        var configured = Environment.GetEnvironmentVariable(environmentVariable)?.Trim();
+
+        if (string.IsNullOrWhiteSpace(configured))
+        {
+            return fallback;
+        }
+
+        var matchedMode = allowedModes.FirstOrDefault(mode => string.Equals(mode, configured, StringComparison.OrdinalIgnoreCase));
+        if (matchedMode is not null)
+        {
+            return matchedMode;
+        }
+
+        throw new InvalidOperationException(
+            $"{environmentVariable} must be one of: {string.Join(", ", allowedModes)}. Current value: '{configured}'."
+        );
     }
 
     private static string GetWorkerId()

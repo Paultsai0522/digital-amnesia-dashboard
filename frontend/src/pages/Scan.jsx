@@ -49,7 +49,7 @@ const Scan = () => {
 
   if (!job && isFetching) {
     return (
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-6 text-zinc-400">
+      <div className="soft-card rounded-[2rem] p-6 text-[var(--muted)]">
         Loading scan job...
       </div>
     )
@@ -57,7 +57,7 @@ const Scan = () => {
 
   if (!job) {
     return (
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-6 text-zinc-400">
+      <div className="soft-card rounded-[2rem] p-6 text-[var(--muted)]">
         {error || 'Scan job not found.'}
       </div>
     )
@@ -66,36 +66,37 @@ const Scan = () => {
   return (
     <div className="space-y-6">
       <ProgressPanel status={job.status} progress={job.progress} error={job.error} />
-      <section className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-5">
+      <section className="soft-card rounded-[2rem] p-5 sm:p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h2 className="text-lg font-medium">Query Summary</h2>
-            <p className="mt-2 text-sm text-zinc-500">
-              Job <span className="font-mono text-zinc-300">{job.id}</span>
+            <p className="soft-kicker">Request</p>
+            <h2 className="font-display mt-1 text-2xl font-semibold tracking-[-0.03em]">Query Summary</h2>
+            <p className="mt-2 text-sm text-[var(--muted)]">
+              Job <span className="font-mono text-[#5d5248]">{job.id}</span>
             </p>
           </div>
-          <p className="text-sm text-zinc-500">
+          <p className="rounded-full border border-[#dccfbe] bg-[#fff9ef] px-3 py-1 text-sm text-[var(--muted)]">
             Updated {new Date(job.updatedAt).toLocaleString()}
           </p>
         </div>
         <div className="mt-4 grid gap-4 md:grid-cols-3">
-          <div>
-            <p className="text-xs uppercase tracking-wide text-zinc-500">Username</p>
-            <p className="mt-1 text-sm text-zinc-200">{job.query.username || "-"}</p>
+          <div className="soft-card-inset rounded-2xl p-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--quiet)]">Username</p>
+            <p className="mt-1 text-sm font-semibold text-[#3b332b]">{job.query.username || "-"}</p>
           </div>
-          <div>
-            <p className="text-xs uppercase tracking-wide text-zinc-500">Display Name</p>
-            <p className="mt-1 text-sm text-zinc-200">{job.query.displayName || "-"}</p>
+          <div className="soft-card-inset rounded-2xl p-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--quiet)]">Display Name</p>
+            <p className="mt-1 text-sm font-semibold text-[#3b332b]">{job.query.displayName || "-"}</p>
           </div>
-          <div>
-            <p className="text-xs uppercase tracking-wide text-zinc-500">Keywords</p>
-            <p className="mt-1 text-sm text-zinc-200">
+          <div className="soft-card-inset rounded-2xl p-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--quiet)]">Keywords</p>
+            <p className="mt-1 text-sm font-semibold text-[#3b332b]">
               {job.query.keywords?.length ? job.query.keywords.join(", ") : "-"}
             </p>
           </div>
         </div>
         {job.error ? (
-          <p className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+          <p className="mt-4 rounded-2xl border border-[#e7b5aa] bg-[#fff1ed] px-4 py-3 text-sm text-[var(--danger)]">
             {job.error}
           </p>
         ) : null}

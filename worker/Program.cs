@@ -26,6 +26,11 @@ builder.Services.AddHttpClient<GitHubApiClient>(client =>
     client.BaseAddress = new Uri(options.GitHubApiBaseUrl);
 });
 builder.Services.AddSingleton<GitHubScanner>();
+builder.Services.AddHttpClient<XApiClient>(client =>
+{
+    client.BaseAddress = new Uri(options.XApiBaseUrl);
+});
+builder.Services.AddSingleton<XScanner>();
 builder.Services.AddHostedService<ScanWorkerService>();
 
 await builder.Build().RunAsync();

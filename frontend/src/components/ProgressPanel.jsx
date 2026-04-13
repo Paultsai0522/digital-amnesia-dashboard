@@ -2,10 +2,10 @@ import React from 'react'
 
 const ProgressPanel = ({ status, progress, error }) => {
   const badgeStyles = {
-    queued: 'border-zinc-700 bg-zinc-800 text-zinc-300',
-    running: 'border-cyan-500/30 bg-cyan-500/10 text-cyan-300',
-    completed: 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300',
-    failed: 'border-red-500/30 bg-red-500/10 text-red-300',
+    queued: 'border-stone-300 bg-stone-100 text-stone-600',
+    running: 'border-amber-200 bg-amber-50 text-amber-800',
+    completed: 'border-emerald-200 bg-emerald-50 text-emerald-700',
+    failed: 'border-rose-200 bg-rose-50 text-rose-700',
   }
 
   const helperText = {
@@ -17,22 +17,25 @@ const ProgressPanel = ({ status, progress, error }) => {
 
   return (
     <div>
-        <section className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-5">
-        <div className="flex items-center justify-between">
-            <h2 className="text-lg font-medium">Scan Progress</h2>
-            <span className={`rounded-full border px-3 py-1 text-xs ${badgeStyles[status] ?? badgeStyles.queued}`}>
+        <section className="soft-card rounded-[2rem] p-5 sm:p-6">
+        <div className="flex items-center justify-between gap-4">
+            <div>
+              <p className="soft-kicker">Worker</p>
+              <h2 className="font-display mt-1 text-2xl font-semibold tracking-[-0.03em]">Scan Progress</h2>
+            </div>
+            <span className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ${badgeStyles[status] ?? badgeStyles.queued}`}>
             {status}
             </span>
         </div>
 
-        <div className="mt-4 h-3 overflow-hidden rounded-full bg-zinc-800">
+        <div className="mt-5 h-3 overflow-hidden rounded-full bg-[#e5d8c8]">
             <div
-            className="h-full rounded-full bg-cyan-400 transition-all"
+            className="h-full rounded-full bg-gradient-to-r from-[#8a6f4f] via-[#b69669] to-[#ddc596] transition-all duration-500"
             style={{ width: `${progress}%` }}
             />
         </div>
 
-        <p className="mt-2 text-sm text-zinc-400">{helperText[status] ?? `${progress}% completed`}</p>
+        <p className="mt-3 text-sm text-[var(--muted)]">{helperText[status] ?? `${progress}% completed`}</p>
         </section>
     </div>
   )

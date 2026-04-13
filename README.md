@@ -1,6 +1,6 @@
 # Digital Amnesia Dashboard
 
-Digital Amnesia Dashboard scans public social platforms for profiles matching a user’s digital identity signals, helping users understand and track their online footprint.
+Digital Amnesia Dashboard scans public social platforms for profiles matching a user's digital identity signals, helping users understand and track their online footprint.
 
 ## Demo
 
@@ -34,8 +34,8 @@ A real queue pipeline and mixed scan providers:
 - the backend stores the job in a queue
 - the worker claims queued jobs and updates progress
 - GitHub uses a live public scan path through the GitHub REST API
-- Reddit and X remain mocked
-
+- X can use a live public scan path through the X API when `X_BEARER_TOKEN` is configured
+- Reddit remains mocked
 
 ## Requirements
 
@@ -43,16 +43,30 @@ A real queue pipeline and mixed scan providers:
 - npm 10+
 - .NET 10 SDK
 
+## Worker Configuration
+
+Important worker environment variables:
+
+- `BACKEND_API_URL`
+- `GITHUB_SCANNER_MODE=live|mock`
+- `X_SCANNER_MODE=auto|live|mock`
+- `X_BEARER_TOKEN`
+
+`X_SCANNER_MODE=auto` uses the live X scanner only when `X_BEARER_TOKEN` is present. The local end-to-end smoke test forces both GitHub and X to mock mode so it stays deterministic.
+
 ## Current Status
 
 ### Implemented
+
 - Frontend scanning UI (form, progress, results)
 - Job creation API
-- Worker-based job processing (mock / initial version)
-- Platform-by-platform progress tracking
+- Worker-based job processing with platform-by-platform progress tracking
+- Live GitHub scanning
+- Live-capable X scanning with token-based auth
 
 ### TODO
-- Real platform scanning 
+
+- Real Reddit scanning
 - Improved matching algorithm
 
 ## API Summary
@@ -71,13 +85,15 @@ Internal worker routes:
 ## Privacy & Ethics
 
 This project:
-- Only accesses publicly available data
-- Does not bypass login systems or protections
+
+- only accesses publicly available data
+- does not bypass login systems or protections
 
 ## Limitations
 
-- only GitHub uses a live external scanner
-- Reddit and X are still mocked
+- GitHub uses a live external scanner
+- X uses a live scanner when `X_BEARER_TOKEN` is configured, otherwise it falls back to mock mode
+- Reddit is still mocked
 - backend persistence is a local JSON file
 - the backend should not be horizontally scaled in this form
 - internal worker endpoints are unauthenticated for demo purposes

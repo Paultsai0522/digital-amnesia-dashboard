@@ -15,7 +15,7 @@ const request = async (path, options = {}) => {
   if (!response.ok) {
     throw new Error(data?.error ?? `Request failed with status ${response.status}.`);
   }
-
+ 
   return data;
 };
 

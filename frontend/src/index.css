@@ -1,1 +1,120 @@
+@import url("https://fonts.googleapis.com/css2?family=Afacad:ital,wght@0,400..700;1,400..700&family=Bricolage+Grotesque:opsz,wght@10..48,500..700&display=swap");
 @import "tailwindcss";
+
+:root {
+  --font-body: "Afacad", "Gill Sans", sans-serif;
+  --font-display: "Bricolage Grotesque", "Gill Sans", sans-serif;
+  --paper: #fbf7ef;
+  --paper-warm: #f5eee2;
+  --linen: #ebe1d3;
+  --ink: #322c25;
+  --muted: #7c7167;
+  --quiet: #a29689;
+  --border: #dfd3c3;
+  --accent: #8a6f4f;
+  --accent-deep: #5f4a34;
+  --danger: #a64b3f;
+  color: var(--ink);
+  font-family: var(--font-body);
+  background: var(--paper);
+}
+
+html {
+  background: var(--paper);
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.9), transparent 34rem),
+    radial-gradient(circle at 80% 10%, rgba(225, 207, 183, 0.46), transparent 26rem),
+    linear-gradient(135deg, var(--paper), #f1e8dc 55%, #e9ddce);
+  color: var(--ink);
+  font-family: var(--font-body);
+  text-rendering: geometricPrecision;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+::selection {
+  background: rgba(138, 111, 79, 0.22);
+}
+
+.soft-rise {
+  animation: soft-rise 520ms ease both;
+}
+
+.soft-rise-delayed {
+  animation: soft-rise 680ms ease both;
+  animation-delay: 90ms;
+}
+
+.soft-card {
+  border: 1px solid rgba(214, 201, 185, 0.9);
+  background: rgba(255, 252, 246, 0.76);
+  box-shadow: 0 24px 70px rgba(101, 82, 58, 0.13);
+  backdrop-filter: blur(18px);
+}
+
+.soft-card-inset {
+  border: 1px solid rgba(221, 211, 199, 0.9);
+  background: rgba(255, 251, 243, 0.72);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+.soft-input {
+  width: 100%;
+  border: 1px solid rgba(211, 198, 180, 0.96);
+  background: rgba(255, 253, 248, 0.86);
+  color: var(--ink);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.92);
+  transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+
+.soft-input:focus {
+  border-color: rgba(138, 111, 79, 0.72);
+  background: rgba(255, 255, 252, 0.96);
+  box-shadow: 0 0 0 4px rgba(138, 111, 79, 0.12);
+}
+
+.soft-button {
+  border: 1px solid rgba(95, 74, 52, 0.22);
+  background: linear-gradient(135deg, #7e6347, #a78761);
+  color: #fffaf1;
+  box-shadow: 0 14px 32px rgba(95, 74, 52, 0.22);
+  transition: transform 180ms ease, box-shadow 180ms ease, opacity 180ms ease;
+}
+
+.soft-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 18px 42px rgba(95, 74, 52, 0.26);
+}
+
+.soft-kicker {
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+@keyframes soft-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

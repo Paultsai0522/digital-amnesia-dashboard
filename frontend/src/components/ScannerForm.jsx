@@ -49,45 +49,55 @@ const ScannerForm = () => {
     <div>
         <form
         onSubmit={handleSubmit}
-        className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-6 shadow-2xl"
+        className="soft-card rounded-[2rem] p-6 sm:p-7"
         >
+            <div className="mb-6">
+              <p className="soft-kicker">New Scan</p>
+              <h2 className="font-display mt-2 text-2xl font-semibold tracking-[-0.03em] text-[#322c25]">
+                Start with the soft signals.
+              </h2>
+              <p className="mt-2 max-w-xl text-sm leading-6 text-[var(--muted)]">
+                Add one or more hints. The worker will use them to search the configured public platforms.
+              </p>
+            </div>
+
             <div className="grid gap-5 md:grid-cols-2">
                 <div>
-                <label className="mb-2 block text-sm text-zinc-300">Username</label>
+                <label className="mb-2 block text-sm font-semibold text-[var(--accent-deep)]">Username</label>
                 <input
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    placeholder="e.g. Trump"
-                    className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-sm outline-none focus:border-cyan-400"
+                    placeholder="e.g. trump"
+                    className="soft-input rounded-2xl px-4 py-3 text-sm outline-none"
                 />
                 </div>
 
                 <div>
-                <label className="mb-2 block text-sm text-zinc-300">Display Name</label>
+                <label className="mb-2 block text-sm font-semibold text-[var(--accent-deep)]">Display Name</label>
                 <input
                     value={displayName}
                     onChange={(e) => setDisplayName(e.target.value)}
                     placeholder="e.g. Donald Trump"
-                    className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-sm outline-none focus:border-cyan-400"
+                    className="soft-input rounded-2xl px-4 py-3 text-sm outline-none"
                 />
                 </div>
             </div>
 
             <div className="mt-5">
-                <label className="mb-2 block text-sm text-zinc-300">Keywords</label>
+                <label className="mb-2 block text-sm font-semibold text-[var(--accent-deep)]">Keywords</label>
                 <input
                 value={keywords}
                 onChange={(e) => setKeywords(e.target.value)}
-                placeholder="us, president"
-                className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-sm outline-none focus:border-cyan-400"
+                placeholder="president, usa, golf"
+                className="soft-input rounded-2xl px-4 py-3 text-sm outline-none"
                 />
-                <p className="mt-2 text-xs text-zinc-500">
+                <p className="mt-2 text-xs text-[var(--quiet)]">
                 Separate keywords with commas.
                 </p>
             </div>
 
             {activeError ? (
-              <p className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+              <p className="mt-4 rounded-2xl border border-[#e7b5aa] bg-[#fff1ed] px-4 py-3 text-sm text-[var(--danger)]">
                 {activeError}
               </p>
             ) : null}
@@ -95,7 +105,7 @@ const ScannerForm = () => {
             <button
                 type="submit"
                 disabled={isSubmitting}
-                className="mt-6 rounded-xl bg-cyan-400 px-5 py-3 text-sm font-medium text-zinc-950 transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+                className="soft-button mt-6 rounded-2xl px-5 py-3 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60"
             >
                 {isSubmitting ? 'Queueing...' : 'Queue Scan'}
             </button>
