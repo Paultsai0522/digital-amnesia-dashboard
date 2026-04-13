@@ -19,7 +19,7 @@ const App = () => {
             Identity Footprint Scanner
           </h1>
           <p className="mt-4 max-w-2xl text-base leading-7 text-[var(--muted)]">
-            A calm workspace for queueing public identity scans, watching worker progress, and reviewing profile matches without the hard-edged dashboard glare.
+            A calm workspace for queueing public identity scans, watching worker progress, and reviewing profile matches.
           </p>
         </header>
         <main className="soft-rise-delayed">

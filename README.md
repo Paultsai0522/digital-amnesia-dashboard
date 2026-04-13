@@ -68,6 +68,7 @@ Important worker environment variables:
 
 - Real Reddit scanning
 - Improved matching algorithm
+- Detailed post scanning
 
 ## API Summary
 
