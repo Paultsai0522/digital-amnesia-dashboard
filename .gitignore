@@ -1,0 +1,21 @@
+.agent/
+.agents/
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# .NET build outputs
+**/bin/
+**/obj/
+
+# IDE / OS artifacts
+.vs/
+.vscode/
+*.user
+*.suo
+.DS_Store
+Thumbs.db
